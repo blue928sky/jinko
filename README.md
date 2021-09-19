@@ -44,4 +44,16 @@
 当時のスマホ向けWebアプリを作成に必須だったのではないかと思われるくらい様々な所で見かけたjQueryを使用していました。  
 今でも現役でアップデートはされていますが、見る機会は減った気がします。  
 少ない記述でDOM操作可能で簡単にAjaxに対応していたのでなかなかどうして便利だったのですが、jQuery Mobileの記述量の多さから他のフレームワークに移られてしまいました。[Onsen UI](https://ja.onsen.io/)なんてのもありましたね。  
-HTML5もドラフトされて「なにこれ！HTMLでこんな表現できんの！？」って状態だったのですが、案の定IEさんの対応が遅く(W3CとWHATWGの対立もあって)
+HTML5もドラフトされて「なにこれ！HTMLでこんな表現できんの！？」って状態だったのですが、案の定IEさんの対応が遅く(W3CとWHATWGの対立もあって)記述内容がしっちゃかめっちゃかだった気がします。
+
+特にCSS3。  
+ベンダープレフィックスと呼ばれるものを大量に書き込まなきゃ各ブラウザに対応できなかったという面倒くさいことが山のようにありました。今はだいぶ緩和されてみたいですが。
+<details>
+  <summary>主なベンダープレフィックス</summary>
+  <ul>
+    <li><code>-moz-</code>&ensp;&ensp;&ensp;&ensp;Firefox</li>
+    <li><code>-webkit-</code>&ensp;Google Chrome、Safari</li>
+    <li><code>-o-</code>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;Opera</li>
+    <li><code>-ms-</code>&ensp;&ensp;&ensp;&ensp;&ensp;Internet Explorer</li>
+  </ul>
+</details>
