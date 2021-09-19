@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html manifest="cache.appcache" lang="ja">
+    <head>
+        <!-- title -->
+        <title>jinko</title>
+        
+        <!-- meta -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+        <link rel="shortcut icon" href="../img/favicon.ico" />
+         	<!-- JavaScriptがoffになってる時に自動的に遷移 -->
+        <noscript><meta http-equiv="Refresh" content="0, url=JSoff.html" /></noscript>
+    
+        <!-- External file -->
+            <!-- css -->
+        <link rel="stylesheet" href="../css/jquery.mobile-1.4.5.min.css" />
+        <link rel="stylesheet" href="css/css.css" />
+            <!-- javascript -->
+        <script type="text/javascript" src="../js/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="js/js.js"></script>
+        <script type="text/javascript" src="js/renewal.js"></script>
+        <script type="text/javascript" src="../js/jquery.mobile-1.4.5.min.js"></script>
+    </head>
+    
+    <body>
+        <!-- Talk -->
+        <div data-role="page" id="talk" data-title="jinko - Talk">
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>jinko</h1>
+                <a href="#learn-word" id="learn-btn" class="ui-btn ui-corner-all ui-icon-edit ui-btn-inline ui-btn-icon-notext ui-btn-right"></a>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content">
+                <span id="talkP"></span>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <form onSubmit="send();return false;">
+                    <table class="futa" cellspacing="3" width="100%">
+                        <tr>
+                            <td width="99%">
+                                <input id="text" type="text" value="" autocomplete="off" />
+                            </td>
+                            <td width="1%">
+                                <input id="futaB" type="submit" value="送信" class="ui-btn ui-btn-inline ui-shadow ui-corner-all" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu" data-display="overlay" data-position-fixed="true">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#" data-rel="close">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#learnList">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+        </div><!-- /Talk -->
+        
+        
+        
+        <!-- Learn -->
+        <div data-role="page" id="learn-word" data-title="jinko - Learn">
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu2" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>learn</h1>
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-icon-back ui-btn-inline ui-btn-icon-notext ui-btn-right"></a>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <div style="max-width:480px;text-align:left;">
+                    <h3 class="ui-title">言葉を覚えさせます。</h3><br>
+                    <form onSubmit="learn();return false;">
+                        <input type="text" id="inputData" placeholder="どの言葉に反応する？" required />
+                        <input type="text" id="outputData" placeholder="どう返せばいい？" required />
+                        <input type="submit" value="覚える" />
+                    </form>
+                </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu2" data-display="overlay" data-position-fixed="true">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#learnList" data-rel="close">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+        </div><!-- /Learn -->
+
+        
+        
+        <!-- How to use -->
+        <div data-role="page" id="how" data-title="jinko - How to use">
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu3" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>how to use</h1>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <div style="max-width:480px;text-align:left;">
+                    <h3>使い方</h3>
+                    <p>話し相手がいない時。ちょっと寂しい時に。<br>
+                    こいつのことを思い出してやって下さい。<br><br>
+                    作者と同じで流行りの言葉や、カタカナは少し苦手です。<br>
+                    わからなかったら、そっと教えてあげましょう。</p>
+                    
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>トーク</h3>
+                        <p>トークでは、画面下の入力欄に言葉を入れて送信すれば、自動で言葉が返ってきます。<br><br>
+                        <img src="img/img01.png" style="max-width:100%;" alt="入力欄" /><br><br>
+                        <span class="aka">※表示や動作がおかしくなった時はリロードして下さい。</span></p>
+                    </div><!-- /collapsible -->
+                    
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>学習機能</h3>
+                        <p><img src="img/img02.png" alt="学習機能のボタン" style="float:left;" />このボタンがトーク画面右上に表示されていれば使用できます。<br><br>
+                        トーク画面の右上のボタンを押すと学習機能のウィンドウが表示されます。<br>
+                        <div align="center"><img src="img/img03.png" alt="学習機能ウィンドウ" style="max-width:100%;" /></div>
+                        『どの言葉に反応する？』で反応する言葉を、『どう返せばいい？』に返して欲しい言葉を入れて『覚える』ボタンを押して下さい。<br>
+                        『覚えました』とメッセージが出れば登録完了です。<br><br>
+                        覚えた言葉は、画面左上<a href="#Menu3">メニュー</a>の『<a href="#learnList">覚えさせた言葉</a>』の『覚えさせた言葉一覧表示』ボタンで表示することができます。</p>
+                        <p class="aka indentR">※覚えた単語はお使いの端末、かつ、お使いのブラウザのみに保存されます。</p>
+                    </div><!-- /collapsible -->
+                    
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>リセット</h3>
+                        <p>覚えさせた言葉を消したい時に使用して下さい。『忘れる』ボタンを押すと、覚えた言葉を全部忘れます。<br><br>
+                        また、『忘れる』を行っても表示や動作が治らない場合に『初期化』してください。</p>
+                    </div><!-- /collapsible -->
+                    
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>コツ</h3>
+                        <p>学習機能で<br>『忘れちゃった』→『大丈夫か？』<br>では、『忘れた……』という言葉には反応できません。<br>
+                        しかし<br>
+                        <div align="center"><img src="img/img04.png" alt="学習機能ウィンドウ" style="max-width:100%;" /></div>
+                        と覚えさせると『忘れた……』という言葉に反応することができます。</p>
+                    </div><!-- /collapsible -->
+                    
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>覚醒</h3>
+                        <p>覚醒モードなるものを搭載しています。</p>
+                        <ol>
+                            <li>覚醒する？</li>
+                            <li>覚醒しちゃう？</li>
+                            <li>覚醒しちゃいます？</li>
+                            <li>覚醒しちゃいましょう！</li>
+                        </ol>
+                        <p>この順番で送信して『覚醒する』を押すと覚醒モードに移行します。<br>途中で『ぷしゅう……』と返ってきた場合は失敗です。１から始めましょう。</p>
+                    </div><!-- /collapsible -->
+                </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu3" data-display="overlay" data-position-fixed="true">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#" data-rel="close">使い方</a></li>
+                    <li><a href="#learnList">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+        </div><!-- /How to use -->
+
+
+        <!-- Learned List-->
+        <div data-role="page" id="learnList" data-title="jinko - Learned List">
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu4" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>learned List</h1>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <div style="max-width:480px;text-align:left;">
+                    
+                    <table class="ui-responsive table-stroke" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="50%">反応する言葉</th>
+                                <th width="50%">返す言葉</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listB"></tbody>
+                    </table>
+                    
+                    <button class="ui-btn ui-corner-all" onClick="printL()">覚えさせた言葉一覧を表示</button>
+                </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu4" data-display="overlay" data-position-fixed="true">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#" data-rel="close">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+        </div><!-- /Learned List -->
+        
+        
+        
+        <!-- Info -->
+        <div data-role="page" id="info" data-title="jinko - Info">
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu5" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>info</h1>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <div style="max-width:480px;text-align:left;">
+                    <h3>情報</h3>
+                    <table class="ui-responsive table-stroke" width="100%">
+                        <tbody>
+                            <tr>
+                                <th width="40%">名前</th>
+                                <td id="name" width="60%">jinko</td>
+                            </tr>
+                            <tr>
+                                <th width="40%">初期単語</th>
+                                <td id="syoki" width="60%"></td>
+                            </tr>
+                            <tr>
+                                <th width="40%">覚えた単語</th>
+                                <td width="60%" id="plus"><script>document.write(aryPls2.length);</script></td>
+                            </tr>
+                            
+                            <tr>
+                                <th width="40%">作者</th>
+                                <td width="60%">ゆーちゃん <a href="https://twitter.com/blue928sky" target="_blank">(@blue928sky)</a></td>
+                            </tr>
+                            <tr>
+                                <th width="40%">最終更新日</th>
+                                <td id="upDate" width="60%">2014年07月22日</td>
+                            </tr>
+                            <tr>
+                                <th width="40%">バージョン</th>
+                                <td id="ver" width="60%">1.0.0</td>
+                            </tr>
+                            <tr>
+                                <th width="40%">更新内容</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- 更新内容 -->
+                    <div id="renewal"></div>
+                    
+                    <p class="indentR">１番目の数字<br>・システムの大幅変更など。</p>
+                    <p class="indentR">２番目の数字<br>・大きなバグの修正。<br>・UIの変更など。</p>
+                    <p class="indentR">３番目の数字<br>・小さなバグの修正。<br>・初期単語の追加など。</p>
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right">
+                        <h3>アーカイブ</h3>
+                        <ul>
+                            <li><a href="archive/jinko1.0.0.html" data-ajax="false">1.0.0</a></li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                    
+                    <p class="aka indentR">※動作は最新版に付随して変更されるため、アーカイブの動作の保証はできません。</p>
+                </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu5" data-display="overlay" data-position-fixed="true">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#learnList">覚えた言葉</a></li>
+                    <li><a href="#" data-rel="close">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+        </div><!-- /Info -->
+        
+        
+        
+        <!-- Reset -->
+        <div data-role="page" id="reset" data-title="jinko - Reset">
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu6" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>reset</h1>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <h3>覚えさせた言葉をリセットします</h3>
+                <p>覚えさせた言葉は<br><a href="#Menu6">メニュー</a>の『<a href="#learnList">覚えた言葉</a>』<br>から見ることができます</p>
+                <a href="#popupDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-btn-a ui-shadow" style="max-width:480px;">忘れる</a>
+                <div data-role="popup" id="popupDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+                    <div data-role="header" data-theme="a">
+                        <h1>警告</h1>
+                    </div>
+                    <div role="main" class="ui-content" align="center">
+                        <h3 class="ui-title">覚えさせた言葉を消しても良いですか</h3>
+                        <p>この操作は取り消せません</p>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-b" data-rel="back">いいえ</a>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow" onClick="clearStorage()">忘れる</a>
+                    </div>
+                </div><br>
+                
+                <p>リロードや上記の『忘れる』をしても<br>表示等がおかしい時に初期化して下さい</p>
+                <a href="#popupDialog2" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-btn-a ui-shadow" style="max-width:480px;">初期化</a>
+                <div data-role="popup" id="popupDialog2" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+                    <div data-role="header" data-theme="a">
+                        <h1>警告</h1>
+                    </div>
+                    <div role="main" class="ui-content" align="center">
+                        <h3 class="ui-title">　本当に初期化しても良いですか　</h3>
+                        <p>この操作は取り消せません</p>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-b" data-rel="back">いいえ</a>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-b" onClick='storage.setItem("aryPls", JSON.stringify([]));window.alert("初期化しました");location.href="index.html"'>初期化</a>
+                    </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu6" data-display="overlay" data-position-fixed="true">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#learnList">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#" data-rel="close">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+        </div><!-- /Reset -->
+    </body>
+</html>

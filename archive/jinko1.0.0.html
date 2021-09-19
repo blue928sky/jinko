@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <!-- title -->
+        <title>人工無能</title>
+        
+        <!-- meta -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+        <link rel="shortcut icon" href="../img/favicon.ico" />
+         	<!-- JavaScriptがoffになってる時に自動的に遷移 -->
+        <noscript><meta http-equiv="Refresh" content="0, url=JSoff.html" /></noscript>
+    
+        <!-- External file -->
+            <!-- css -->
+        <link rel="stylesheet" href="../../css/jquery.mobile-1.4.0.min.css" />
+        <link rel="stylesheet" href="../css/css.css" />
+            <!-- javascript -->
+        <script type="text/javascript" src="../../js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="js/js.js"></script>
+        <script type="text/javascript" src="../../js/jquery.mobile-1.4.0.min.js"></script>
+        <script type="text/javascript">
+            var i = 0;         // 初期に挨拶を返すための変数
+            var str;
+            var s = 0;         // 覚えるボタンのID付与
+            var wake = 0;      // 覚醒フラグ
+            var waked = 0;     // 覚醒した後のフラグ
+            
+            DH = new Date();                // オブジェクトの生成
+            Month = DH.getMonth() + 1;      // 月を返す
+            Day   = DH.getDate();           // 日にちを返す
+            Hours = DH.getHours();          // 時間を返す
+            var MD = "今日は" + Month + "月" + Day + "日だよ";
+            
+            // 学習機能
+            if(typeof localStorage === 'undefined'){
+                window.alert("このブラウザでは学習機能が使用できません");
+                nec = 1;
+            }else{
+                var storage = localStorage;
+                var aryPls  = [];
+                var aryPls2;
+                var aryPlsL;                                            // aryPlsの登録単語数
+                if (storage.aryPls == null) {
+                    storage.setItem("aryPls", JSON.stringify(aryPls));  // JSON形式で追加しないと文字化けが起こる
+                    storage.setItem("aryPlsL", 0);                      // aryPlsの登録単語数の記録
+                }
+                aryPls2 = JSON.parse(storage.getItem("aryPls"));
+                aryPlsL = storage.getItem("aryPlsL");
+                
+                // 覚えるボタン
+                function learn(){
+                    var input   = document.getElementById('inputData').value;
+                    var output  = document.getElementById('outputData').value;
+                    
+                    if(input != "" && output != ""){
+                        input = input.replace(/&/g, "&amp");            // HTMLの文字コードの拒否
+                        output = output.replace(/&/g, "&amp");
+                        input = input.replace(/</g, "&lt;");
+                        output = output.replace(/</g, "&lt;");
+                        aryPls2.push([input, output]);
+                        
+                        storage.aryPls = JSON.stringify(aryPls2);
+                        storage.aryPlsL++;
+                        
+                        window.alert("覚えました");
+                        document.getElementById('inputData').value = "";
+                        document.getElementById('outputData').value = "";
+                        document.getElementById('plus').textContent = storage.aryPlsL; // 表示を変更
+                    }else{
+                        window.alert("入力して下さい");
+                    }
+                }
+                
+                // 忘れるボタン
+                function clearStorage(){
+                    storage.setItem("aryPls", "[]");    // JSON形式で追加しないと文字化けが起こる
+                    storage.setItem("aryPlsL", 0);      // aryPlsの登録単語数の記録
+                    window.alert("覚えた言葉をリセットしました");
+                    document.getElementById('plus').textContent = 0;
+                    document.getElementById('listB').innerHTML = "";
+                }
+                
+                // 覚えさせるボタンの挙動
+                function set(num){
+                    str = str.replace(/&amp/g, "&");
+                    str = str.replace(/&lt;/g, "<");
+                    
+                    var string = "ing" + num;
+                    document.getElementById('inputData').value = document.getElementById(string).textContent;
+                }
+                
+                // 覚えさせた言葉一覧を表示ボタン
+                function printL(){
+                    if(storage.aryPlsL == 0){
+                        window.alert("言葉を覚えていません");
+                    }else{
+                        var listB = document.getElementById('listB');
+                        listB.innerHTML = "";
+                        for(var j=0; j<storage.aryPlsL; j++){
+                            aryPls2.sort();
+                            listB.innerHTML += "<tr><td>" + aryPls2[j][0] + "</td><td>" + aryPls2[j][1] + "</td></tr>";
+                        }
+                    }
+                }
+            }
+
+            // 登録単語
+            var ary = [["おは|グッモニ|ぐっもに", 7, "おはよう", "おはー", "おはっ！", "おはようございます", "Good morning!", "おはようさん", "今日も１日はじまったね"],
+                        ["わか(らない|りませ)", 3, "……わからない", "何が？", "そうですか"],
+                        ["こんばん(わ|は)", 4, "こんばんは", "こんばんわ", "月見える？", "星は見える？"],
+                        ["こんにち(わ|は)", 4, "こんにちは", "こんにちわ", "調子はどう？", "お昼ご飯は？"],
+                        ["さ(よ(う|ー|)|い)なら", 3, "そういうこと言うなよ", "寂しいね", "さよなら三角また来て四角"],
+                        ["おやすみ", 2, "おやすみ", "また明日"],
+                        ["(何|なん)(日|にち).*?？", 5, MD, MD, MD, MD, "自分で調べたら？"],
+                        ["(教|おし)えろ", 2, "そんな態度で教えてもらえるとでも？", "忘れた"],
+                        ["ひま|暇", 4, "いま忙しい", "お前ってホント暇だな", "空みてぼーっとしてみたら？", "何か話そっか"],
+                        ["ねむ|眠い", 3, "いつも言ってるよね、その言葉", "どれだけ寝たら気が済むの？", "寝ればいいよ"],
+                        // 11
+                        ["ね(え|ぇ)(？|$)", 2, "なに？", "慣れ慣れしいよ<br>ところでなに？"],
+                        ["馬鹿|ば(ー|)か|バ(ー|)カ", 3, "自己紹介はほどほどにね", "はいはい", "お前ほどじゃないよ"],
+                        ["阿呆|あ(ー|)ほ|ア(ー|)ホ", 3, "それしか言えないの？", "はいはい", "アホが移りそう"],
+                        ["(なんで|なん|なんに|何)(もない|もね)|(なん|何)にも|^(別|べつ)に$", 3, "なんだよ", "なんにもないのかよ", "本当に何にもない？"],
+                        ["お、おう|(あ|あ、)はい", 2, "なんだこの空気", "お、おう", "あ、はい"],
+                        ["悪趣味|あくしゅみ", 2, "蓼喰ふ虫も好き好きだよ", "そういうお前はどうなの？"],
+                        ["(つか|疲)れ", 3, "お疲れさま", "今日も頑張ったね", "ゆっくり休もうか"],
+                        ["ありがと", 3, "どういたしまして", "当たり前のことをしたまでだよ", "お互い様だよ"],
+                        ["なんだ", 2, "随分なご挨拶だな", "どうした"],
+                        ["お(前|まえ)か|むかつく", 3, "悪かったな", "随分なご挨拶だな", "すいませんねー"],
+                        // 21
+                        ["(わる|悪)かった|(ごめ|すま|すみませ|すいませ)ん|ごめんなさい", 3, "こっちも悪かったよ", "こっちこそ、すまん", "言い過ぎた、ごめん"],
+                        ["(頑張|がんば)(ろ|る|った)", 6, "頑張れ", "無理はするなよ", "頑張れよ", "無理はダメだからな", "その調子！", "お疲れ"],
+                        ["(話|はな)(そ|す？)", 2, "なに話す？", "おじいさんは芝刈り機<br>……ってそういう話じゃないか"],
+                        ["^よ(う|ぅ)$|^やぁ$", 3,　"どした？", "慣れ慣れしいな", "なにー？"],
+                        ["うる(さい|せ)|うっせ", 3, "じゃあ、なんでここで話すの？", "んじゃ黙るわ<br>……機械だから無理だったわ", "反応してやってんのに"],
+                        ["(ひど|酷)い|^(つめ|冷)たい$", 2, "ひどいな", "それは褒め言葉として受けとくよ"],
+                        ["だから|しいから", 2, "へー", "そうなんだ"],
+                        ["(なに|何)(いろ|色)", 14, "赤色", "青色", "緑色", "黒色", "白色", "パステルカラー", "暖色", "寒色", "モノクロ", "空色", "オレンジ", "紫色", "黄色", "ピンク"],
+                        ["風邪|(体調|たいちょう)(わる|悪|よくな|良くな)い", 2, "お大事に", "健康的にすごそう"],
+                        ["そうかも", 2, "そうだろ", "そうかも？"],
+                        // 31
+                        ["糞|くそ|クソ", 2, "根はいい奴なんだから、くそとか言うなよ", "言葉遣い気にすれば上出来だ"],
+                        ["いい(ね|よね)", 2, "いいよね", "いいね"],
+                        ["うん", 2, "そっか", "ふーん"],
+                        ["(何|なに)が(良|い)い", 2, "機械だから聞かれてもなぁ", "お前が決めろよ"],
+                        ["聞いて|きいてきいて", 3, "話し？聞くよ", "なになに？", "どうしたー？"],
+                        ["(い|良)い(のか|か)", 4, "良いと思うよ？", "いいよ", "いいのかな……？", "あえてダメで"],
+                        ["(な|無)い", 2, "それは残念", "そうなんだ"],
+                        ["(起|お)きちゃ|(寝|ね)れな", 2, "眠れそう？", "無理して寝るのもストレスかかるよ"],
+                        ["しちゃっ(た|て)", 2, "そうなの？", "そうなんだ"],
+                        [".+?しそう", 3, "まだ間に合うかも？", "無理すんなよ", "急がば回れ、だぞ"],
+                        // 41
+                        ["わかった", 2, "素直で良いね", "わかってくれてよかった"],
+                        ["^(無理|むり)$", 2, "無理って言うなよー", "努力しないで言ってる？"],
+                        ["無理|むり", 1, "無理じゃないさ"],
+                        ["てみよ", 2, "やってみるのが一番", "うまくいくといいね"],
+                        ["いいよ", 1, "そうかそうか"],
+                        ["(すこぶ|頗)る", 1, "頗るって聞くと昂るって言葉を思い出す"],
+                        ["(笑.|笑|w)$|（笑）|ww", 2, "笑うなよ…", "笑いやがる"],
+                        ["(泣|な)(きたい|いいか|きたくなる)", 3, "泣いていいよ", "泣け泣け<br>すっきりしたら笑ってくれや", "いっそ泣いた方がスッキリするんじゃない？"],
+                        ["(死|し)にた(い|くなる|くなっ)", 3, "人生はこれからだぞー<br>やり残したこといっぱいあるはず", "死に物狂いに生きてからでいいんじゃない？", "『生きてて良かった』って日が、瞬間が絶対くるから<br>今はそれまでの余興だよ"],
+                        ["不細工|ブス|ぶす|キモ(い|イ)|きもい", 2, "そんなことねぇよ", "キモくないもーん<br>((癶(癶´;ﾟ;*;ﾟ; )癶 ｶｻｶｻ…"],
+                        // 51
+                        ["ぱ(あ|ぁ)|パ(ア|ァ)|ﾊﾟ(ｱ|ｧ)|( ᐛ👐)|(˙◁˙👐)", 1, "(˙◁˙👐)ﾊﾟｧ"],
+                        ["しなかった(?!？)", 1, "しなかったの？"],
+                        ["(冷|さ)めてる", 1, "そりゃ冷めるさ"],
+                        ["(い|行)ってきます|^いってき(|ま|！)$", 3, "気をつけて", "いってらー", "いってらっしゃーい"],
+                        ["(何|なん)となく", 2, "なんとなくかよ", "テキトーだなぁ"],
+                        ["(☆|★)$", 2, "ほしつけんなよ…", "お、おう"],
+                        ["(間違|まちが)(い|っ|え)", 3, "間違いかよ", "そかそか", "誰にでもミスはある"],
+                        ["(お腹|おなか|腹|はら)(空い|すい|減っ|へっ)た", 5, "またかよ", "何か食べたら？", "腹が減っては戦はできぬ", "食べちゃえ", "まだ食べてないの？"],
+                        ["(おうむ|オウム|鸚鵡)(返|がえ)し", 4, "意趣返し", "恩返し", "倍返し", "繰り返し"],
+                        ["(寂|淋|さみ)し", 2, "かまってやってるだろ", "ここで遊べば良いよ"],
+                        // 61
+                        ["(って|とは)$|(って|とは)(？|\\?)$", 1, "自分でしらべてくれ"],
+                        ["まだ", 2, "まだか", "それは残念"],
+                        ["もう.+?た", 2, "早いな", "お疲れ様"],
+                        ["(覚|おぼ)え(ろ|ろ.|て|て.)$", 1, "覚えさせて"]]         // 64
+                        
+                        // .+?                ワイルドカードで少なくとも1文字以上
+                        // 『.+?』            『』に囲まれた文字列に反応
+                        // string(?!あ)       後ろにあを含まないstringに反応
+                        
+                        var capaA = ary.length;     // 登録した受ける言葉の数
+        
+            // 覚醒スクリプト
+            function wakeUp(){
+                waked=1;
+                document.getElementById('talkP').innerHTML += '<div><p class="ui-body ui-body-a ui-corner-all ui-btn-inline">覚醒しました。<br>終了させるにはリロードしてください。</p></div>';
+                scrollBy(0,200);
+            }
+        
+            // send()のスクリプト
+            function send(){
+                var cnt = 0;   // 一致した回数を入れるための変数
+                var ptalk = document.getElementById('talkP');
+                str = document.getElementById('text').value;
+                str = str.replace(/&/g, "&amp");        // htmlの文字コード拒否
+                str = str.replace(/</g, "&lt;");        // タグを使えないように変換
+
+                var strA;
+                var str1 = '<div align="right"><p class="me ui-bar ui-bar-a ui-corner-all ui-btn-inline">';
+                var str2 = '<div><p class="ui-body ui-body-a ui-corner-all ui-btn-inline">';
+                var str3 = '</p></div>';
+                 
+                if(i == 0){    // 初期に挨拶を返す
+                    var mem = ["", "よう", "なんか用か？", "どうした？", "今日も頑張ろう"];
+                    
+                    if(3 < Hours && Hours < 7){
+                        mem[0] = 'はやいね';
+                    }else if(6 < Hours && Hours < 10){
+                        mem[0] = 'おはよ';
+                    }else if(9 < Hours && Hours < 18){
+                        mem[0] = 'こんにちは';
+                    }else{
+                        mem[0] = 'こんばんは';
+                    }
+                    ptalk.innerHTML += str2 + mem[Math.floor(Math.random()*5)] + str3;  // 数字は挨拶の登録数
+                    i=1;
+                }else if(str!=""&&str!=" "&&str!="　"){              // 本文
+                    var mem = [];                                   // 一時的に保存する配列
+                    
+                    ptalk.innerHTML += str1 + str + str3;           // 自分の発言を入れる
+                    document.getElementById('text').value = "";     // input内の値の消去
+                    
+                    // 初期の単語
+                    for(var j = 0; j<capaA; j++){                   // 配列の量分まわす
+                        var meta;                                   // match()の返り値を入れる変数
+                        var capa;                                   // 登録されてる数を入れる変数
+                        meta =　ary[j][0];                          // いったん格納
+                        var Reg = new RegExp(meta, "g");            // それを正規表現の値として保存(オブジェクト化いないといけない)
+                        
+                        meta = str.match(Reg);                      // 正規表現で検索
+                        
+                        if(meta!=null){                             // null以外なら実行
+                            capa = ary[j].length;                   // 登録数を代入
+                            for(var k = 2; k < capa; k++){
+                                mem[cnt] = ary[j][k];               // 一致した奴の返事を格納
+                                cnt++;                              // 一致して回数をカウントし、代入
+                            }
+                        }
+                    }
+                    
+                    aryPls2 = JSON.parse(storage.getItem("aryPls"));
+                    aryPlsL = storage.getItem("aryPlsL");
+                    
+                    // 追加した単語
+                    if(typeof localStorage === 'undefined'){
+                        return;
+                    }else{
+                        for(var j = 0; j<aryPlsL; j++){                     // 配列の量分まわす
+                            var meta;                                       // indexOfの返り値を入れる変数
+                            meta = str.indexOf(aryPls2[j][0]);              // 受け取った言葉をindexOf()で検索し-1以外だとヒット
+                            
+                            if(meta!=-1){                                   // -1以外なら実行
+                                mem[cnt] = aryPls2[j][1];                   // 一致した奴の返事を格納
+                                cnt++;                                      // 一致して回数をカウントし、代入
+                            }
+                        }
+                    }
+                    
+                    if(cnt > 0){
+                        strA = mem[Math.floor(Math.random()*cnt)];      // 返事を配列から入れる
+                    }else{
+                        strA ='『<span id="ing' + s + '">' + str + '</span>』って？<br><a href="#learn" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-icon-edit ui-btn-icon-left" onClick="set(' + s + ')">覚えさせる</a>';
+                        s++;
+                    }
+                    
+                    // 覚醒機能
+                    if(str == "覚醒する？"){
+                        wake = 1;
+                        strA = "……";
+                    }else if(str == "覚醒しちゃう？" && wake==1){
+                        wake = 2;
+                        strA = "……";
+                    }else if(str == "覚醒しちゃいます？" && wake==2){
+                        wake = 3;
+                        strA = "……！";
+                    }else if(str == "覚醒しちゃいましょう！" && wake==3){
+                        strA = 'うおおおおおおお！<br><a href="#" class="ui-btn ui-corner-all ui-icon-edit ui-btn-icon-left" onClick="wakeUp()">覚醒する</a>';
+                    }else if(wake > 0){
+                        wake = 0;
+                        strA = "ぷしゅう……";
+                    }
+                    
+                    // 覚醒単語
+                    if(waked != 0){
+                        var wakeAry = ["ふひひ", "んんんん！", "くっ……古傷が", "(暗黒微笑)", "(☝ ՞ਊ ՞)☝", "うぇえええええええええええいい", "んぼぁああああああああ", "ヌカコポォオオオオオ", "デュフフ", "ええいいああああああ", "HAHAHA", "きぇえええええええ！", "ひぃいはあああああああ", "うふふふふ！オッケー☆", "でっていう", "おててのシワとシワを合わせてごっつぁんです！", "知ってました？<br>自転車ってタイヤが付いてるんです"];
+                        var len = wakeAry.length;
+                        strA = wakeAry[Math.floor(Math.random()*len)];
+                    }
+                    
+                    // 入力＆処理
+                    ptalk.innerHTML += str2 + strA + str3;
+                    document.getElementById('inputData').value = "";
+                    document.getElementById('outputData').value = "";
+                    cnt = 0;
+                    scrollBy(0,100000);              // 下にスクロール
+                }
+            }
+        </script>
+    </head>
+    
+    <body onLoad="send();">
+        <!-- Talk -->
+        <div data-role="page" id="talk">
+            
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>jinko 1.0.0</h1>
+                <a href="#learn" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-icon-edit ui-btn-inline ui-btn-icon-notext ui-btn-right"></a>
+            </div><!-- /header -->
+            
+            <!-- 編集のpopup -->
+            <div data-role="popup" id="learn" data-overlay-theme="a" data-theme="a" style="max-width:480px;">
+                <!-- header -->
+                <div data-role="header" data-theme="b">
+                    <h1>学習機能</h1>
+                </div>
+                <!-- body -->
+                <div role="main" class="ui-content">
+                    <h3 class="ui-title">言葉を覚えさせます。　　</h3>
+                    <form onSubmit="learn();return false;">
+                        <input type="text" id="inputData" placeholder="どの言葉に反応する？" />
+                        <input type="text" id="outputData" placeholder="どう返せばいい？" />
+                        <input type="submit" value="覚える" />
+                    </form>
+                </div>
+            </div><!-- /編集のpopup -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content">
+                <span id="talkP"></span>
+                
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <form onSubmit="send();return false;">
+                    <table class="futa" cellspacing="3" width="100%">
+                        <tr>
+                            <td width="99%">
+                                <input id="text" type="text" value="" />
+                            </td>
+                            <td width="1%">
+                                <input id="futaB" type="submit" value="送信" class="ui-btn ui-btn-inline ui-shadow ui-corner-all" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu" data-display="overlay">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#" data-rel="close">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#learnList">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+            
+        </div><!-- /Talk -->
+        
+        
+        
+        <!-- How to use -->
+        <div data-role="page" id="how">
+            
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu2" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>how to use</h1>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <div style="max-width:480px;text-align:left;">
+                    <h3>使い方</h3>
+                    <p>話し相手がいない時。ちょっと寂しい時に。<br>
+                    こいつのことを思い出してやって下さい。<br><br>
+                    作者と同じで流行りの言葉や、カタカナは少し苦手です。<br>
+                    わからなかったら、そっと教えてあげましょう。</p>
+                    
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>トーク</h3>
+                        <p>トークでは、画面下の入力欄に言葉を入れて送信すれば、自動で言葉が返ってきます。<br><br>
+                        <img src="img/img01.png" style="max-width:100%;" alt="入力欄" /><br><br>
+                        表示や動作がおかしくなった時はリロードして下さい。</p>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>学習機能</h3>
+                        <p>このサイトを開く時に『このブラウザでは学習機能が使用できません』というメッセージが表示されなければ使用できます。<br><br>
+                        <img src="img/img02.png" alt="学習機能のボタン" style="float:left;" />トーク画面の右上のボタンを押すと学習機能のウィンドウが表示されます。<br>
+                        <div align="center"><img src="img/img03.png" alt="学習機能ウィンドウ" style="max-width:100%;" /></div>
+                        『どの言葉に反応する？』で反応する言葉を、『どう返せばいい？』に返して欲しい言葉を入れて『覚える』ボタンを押して下さい。<br>
+                        『覚えました』とメッセージが出れば登録完了です。<br><br>
+                        覚えた言葉は、画面左上メニューの『<a href="#learnList">覚えさせた言葉</a>』の『覚えさせた言葉一覧表示』ボタンで表示することができます。</p>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>リセット</h3>
+                        <p>覚えさせた言葉を消したい時に使用して下さい。『忘れる』ボタンを押すと、覚えた言葉を全部忘れます。<br><br>
+                        また、『忘れる』を行っても表示や動作が治らない場合に『初期化』してください。</p>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h3>コツ</h3>
+                        <p>学習機能で<br>『忘れちゃった』→『大丈夫か？』<br>では、『忘れた……』という言葉には反応できません。<br>
+                        しかし<br>
+                        <div align="center"><img src="img/img04.png" alt="学習機能ウィンドウ" style="max-width:100%;" /></div>
+                        と覚えさせると『忘れた……』という言葉に反応することができます。</p>
+                    </div><!-- /collapsible -->
+                </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu2" data-display="overlay">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#" data-rel="close">使い方</a></li>
+                    <li><a href="#learnList">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+            
+        </div><!-- /How to use -->
+
+
+        <!-- Learned List-->
+        <div data-role="page" id="learnList">
+            
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu3" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>learned List</h1>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <div style="max-width:480px;text-align:left;">
+                    
+                    <table class="ui-responsive table-stroke" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="50%">反応する言葉</th>
+                                <th width="50%">返す言葉</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listB"></tbody>
+                    </table>
+                    
+                    <button class="ui-btn ui-corner-all" onClick="printL()">覚えさせた言葉一覧を表示</button>
+                </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu3" data-display="overlay">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#" data-rel="close">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+            
+        </div><!-- /Learned List -->
+        
+        
+        
+        <!-- Info -->
+        <div data-role="page" id="info">
+            
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu4" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>info</h1>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <div style="max-width:480px;text-align:left;">
+                    <h3>情報</h3>
+                    <table class="ui-responsive table-stroke" width="100%">
+                        <tbody>
+                            <tr>
+                                <th width="40%">名前</th>
+                                <td width="60%">jinko</td>
+                            </tr>
+                            <tr>
+                                <th width="40%">初期単語</th>
+                                <td width="60%"><script>document.write(capaA);</script></td>
+                            </tr>
+                            <tr>
+                                <th width="40%">覚えた単語</th>
+                                <td width="60%" id="plus"><script>document.write(storage.aryPlsL);</script></td>
+                            </tr>
+                            
+                            <tr>
+                                <th width="40%">作者</th>
+                                <td width="60%"><a href="mailto:blue928sky2@yahoo.co.jp" target="_blank">ゆーちゃん</a></td>
+                            </tr>
+                            <tr>
+                                <th width="40%">最終更新日</th>
+                                <td width="60%">2014年７月22日</td>
+                            </tr>
+                            <tr>
+                                <th width="40%">バージョン</th>
+                                <td width="60%">1.0.0</td>
+                            </tr>
+                            <tr>
+                                <th width="40%">更新内容</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-collapsed="false">
+                        <h3>β 2.5.2</h3>
+                        <ul>
+                            <li>細かな内部の仕様の変更。</li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right">
+                        <h3>β 2.5.1</h3>
+                        <ul>
+                            <li>覚醒モードの追加(β版)。</li>
+                            <li>言葉を入力した際に自動スクロールするよう修正。</li>
+                            <li>初期単語の追加。</li>
+                            <li>細かなバグの修正。</li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right">
+                        <h3>β 2.4.0</h3>
+                        <ul>
+                            <li>学習機能で入力したHTMLタグの無効化。</li>
+                            <li>言葉を覚えていないときに『覚えさせた言葉を表示』を押すとアラートが出るように変更。</li>
+                            <li>返事に含まれる『覚えさせる』ボタンの挙動の改善。</li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right">
+                        <h3>β 2.3.0</h3>
+                        <ul>
+                            <li>入力したHTMLタグの無効化。</li>
+                            <li>細かなバグの修正</li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right">
+                        <h3>β 2.2.0</h3>
+                        <ul>
+                            <li>モバイルChromeで学習機能のウィンドウに文字入力できないバグを改善。</li>
+                            <li>一部UIの変更</li>
+                            <li>覚えた言葉ページを追加。</li>
+                            <li>初期単語の追加。</li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right">
+                        <h3>β 2.1.1</h3>
+                        <ul>
+                            <li>初期単語の追加。</li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right">
+                        <h3>β 2.1.0</h3>
+                        <ul>
+                            <li>使い方のページを追加。</li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right">
+                        <h3>β 2.0.0</h3>
+                        <ul>
+                            <li>正規表現にて初期単語欄の簡略化。</li>
+                        </ul>
+                    </div><!-- /collapsible -->
+                <p>１番目の数字<br>・システムの大幅変更。<br><br>２番目の数字<br>・大きなバグの修正。<br>・UIの変更。<br><br>３番目の数字<br>・小さなバグの修正。<br>・初期単語の追加。</p>
+                </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu4" data-display="overlay">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#learnList">覚えた言葉</a></li>
+                    <li><a href="#" data-rel="close">情報</a></li>
+                    <li><a href="#reset">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+            
+        </div><!-- /Info -->
+        
+        
+        
+        <!-- Reset -->
+        <div data-role="page" id="reset">
+            
+            <!-- header -->
+            <div data-role="header" data-position="fixed">
+                <a href="#Menu5" class="ui-btn ui-corner-all ui-btn-inline ui-btn-mini ui-icon-bars ui-btn-icon-left">Menu</a>
+                <h1>reset</h1>
+            </div><!-- /header -->
+            
+            <!-- main -->
+            <div data-role="main" class="ui-content" align="center">
+                <h3>覚えさせた言葉をリセットします</h3>
+                <p>覚えさせた言葉は<br>メニューの『<a href="#learnList">覚えた言葉</a>』<br>から見ることができます</p>
+                <a href="#popupDialog" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-btn-a" style="max-width:480px;">忘れる</a>
+                <div data-role="popup" id="popupDialog" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+                    <div data-role="header" data-theme="a">
+                        <h1>警告</h1>
+                    </div>
+                    <div role="main" class="ui-content" align="center">
+                        <h3 class="ui-title">覚えさせた言葉を消しても良いですか</h3>
+                        <p>この操作は取り消せません</p>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-b" data-rel="back">いいえ</a>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow" onClick="clearStorage()">忘れる</a>
+                    </div>
+                </div><br>
+                
+                <p>リロードや上記の『忘れる』をしても<br>表示等がおかしい時に初期化して下さい</p>
+                <a href="#popupDialog2" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-btn-a" style="max-width:480px;">初期化</a>
+                <div data-role="popup" id="popupDialog2" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+                    <div data-role="header" data-theme="a">
+                        <h1>警告</h1>
+                    </div>
+                    <div role="main" class="ui-content" align="center">
+                        <h3 class="ui-title">　本当に初期化しても良いですか　</h3>
+                        <p>この操作は取り消せません</p>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-b" data-rel="back">いいえ</a>
+                        <a href="#" class="ui-btn ui-corner-all ui-btn-inline ui-btn-b" onClick='storage.clear();window.alert("初期化しました");location.href="index.html"'>初期化</a>
+                    </div>
+            </div><!-- /main -->
+            
+            <!-- footer -->
+            <div data-role="footer" data-position="fixed">
+                <h4></h4>
+            </div><!-- /footer -->
+            
+            <!-- Menu -->
+            <div data-role="panel" id="Menu5" data-display="overlay">
+                <h2>Menu</h2><br>
+                <ul data-role="listview">
+                    <li data-icon="delete" data-theme="b"><a href="#" data-rel="close">Close menu</a></li>
+                    <li><a href="#talk">トーク</a></li>
+                    <li><a href="#how">使い方</a></li>
+                    <li><a href="#learnList">覚えた言葉</a></li>
+                    <li><a href="#info">情報</a></li>
+                    <li><a href="#" data-rel="close">リセット</a></li>
+                </ul>
+            </div><!-- /Menu -->
+            
+        </div><!-- /Reset -->
+    </body>
+</html>

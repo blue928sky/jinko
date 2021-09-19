@@ -1,0 +1,53 @@
+/* フォント */
+body, .ui-content {
+		font:18px/130% "Lucida Grande", "Lucida Sans Unicode", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", Helvetica, Arial, Verdana, sans-serif;
+}
+
+/* footerのパディグ指定 */
+.futa {
+        padding: 0px 7px 0px 7px;
+}
+
+input[type="text"], input[type="password"],
+textarea, select {
+        border: none;
+        outline: none;
+}
+
+/* menu */
+.menu {
+        margin: 3px;
+}
+
+/*  */
+.me {
+        text-align: left;
+        margin: 0 -1px 0 0;
+        font-weight: normal;
+}
+
+.futaB {
+        font-weight: normal;
+}
+
+/* アップデートの更新日 */
+.update_day {
+        font-size: 12px;
+}
+
+/* 注釈 */
+.aka {
+    color:red;
+    font-size:15px;
+}
+
+/* インデント */
+.indentR {
+    padding-left: 1em;
+    text-indent: -0.7em;
+}
+
+/* h2 */
+h2 {
+    text-align: left;
+}
