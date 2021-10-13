@@ -1,3 +1,4 @@
+# #=== WIP ===#
 # jinkoさんとは？
 ### 遊びたい方は⇒[こちら](https://blue928sky.github.io/jinko/)
 
